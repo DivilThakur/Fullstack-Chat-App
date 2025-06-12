@@ -21,14 +21,20 @@ app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 app.use(cookieParser());
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "*",
     credentials: true
 }))
+
+app.get("/ping", (req, res) => {
+  res.status(200).send("OK");
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
 if (process.env.NODE_ENV === "production") {
+
+    app.set("trust proxy", 1);
     app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
     app.get("*", (req, res) => {
